@@ -6,6 +6,6 @@
 
 * [solucion.h](solucion.h)
 
-*[solucion.c](solucion.c)
+* [solucion.c](solucion.c)
 
-*[mainsol.c](mainsol.c)
+* [mainsol.c](mainsol.c)
