@@ -4,4 +4,4 @@
 ## Juan Camilo Gonzalez Berrio - 1735277 
 ## Juan Esteban Camargo Chacón - 1924984
 
-* [mem.c] (mem.c)
+* [mem.c](mem.c)
