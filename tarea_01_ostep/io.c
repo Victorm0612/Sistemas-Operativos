@@ -5,8 +5,8 @@
 int main(int argc, char *argv[])
  {
   FILE *archivo;
-  int Lp; //Lp = LastPosition
-  int posActual = 0; //posActual = PosiciónActual
+  int Lp, posActual; //Lp = LastPosition ; posActual = PosiciónActual
+  
 
 //VALIDACIÓN-EXISTENCIA DE ARCHIVO DE TEXTO//
 if((archivo = fopen(argv[1],"r"))!=NULL)
@@ -14,13 +14,11 @@ if((archivo = fopen(argv[1],"r"))!=NULL)
          archivo = fopen(argv[1],"r");
          fseek(archivo,0,SEEK_END);
          Lp = ftell(archivo);
-         do
+         for(posActual=1; posActual < Lp; posActual++)
           {
            printf("%c",fgetc(archivo));
            fseek(archivo,-posActual,SEEK_END);
-           posActual++;
           }
-         while(posActual <= (Lp+1));
          printf("\n");
          fclose(archivo);
          return 0;
@@ -28,5 +26,6 @@ if((archivo = fopen(argv[1],"r"))!=NULL)
     else
         {
             printf("Archivo no encontrado, revise lo digitado\n");
+            return 1;
         }
  }
