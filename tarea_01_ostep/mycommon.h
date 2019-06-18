@@ -1,6 +1,6 @@
 #ifndef __MYCOMMON__
 #define __MYCOMMON__
- 
+/*Archivos de cabecera para permitir el correcto funcionamiento de los hilos*/ 
 #include "pthread.h"
 #include "common.h"
 #define puerta pthread_mutex_t // nuevo tipo de dato
