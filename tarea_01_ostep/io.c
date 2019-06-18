@@ -14,10 +14,12 @@ if((archivo = fopen(argv[1],"r"))!=NULL)
          archivo = fopen(argv[1],"r");
          fseek(archivo,0,SEEK_END);
          Lp = ftell(archivo);
-         for(posActual=1; posActual < Lp; posActual++)
+        while(posActual <  Lp)
           {
-           printf("%c",fgetc(archivo));
+           posActual++;
            fseek(archivo,-posActual,SEEK_END);
+           printf("%c",fgetc(archivo));
+           
           }
          printf("\n");
          fclose(archivo);
