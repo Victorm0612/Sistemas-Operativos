@@ -5,15 +5,20 @@
 #include "mycommon.h"
 
 volatile int counter = 0;
+/*Creación de variable global door de tipo puerta*/
 puerta door;
 int loops;
 
 void *worker(void *arg) {
     int i;
+/*Cuando uno de los hilos vaya a iterar, cerrará la puerta primero
+para evitar conflicto con otro hilo*/
     cerrar_puerta(door);
     for (i = 0; i < loops; i++) {
 	counter++;
     }
+/*El hilo al terminar su trabajo, le permitirá a otros hilos hacer el suyo
+abriendo la puerta*/
     abrir_puerta(door);
     return NULL;
 }
