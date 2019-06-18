@@ -5,3 +5,5 @@
 ## Juan Esteban Camargo Chacón - 1924984
 
 * [mem.c](mem.c)
+* [threads.c](threads.c)
+
