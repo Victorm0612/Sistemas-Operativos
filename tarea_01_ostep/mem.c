@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "common.h"
-/*Código memoria*/
+
 int main(int argc, char *argv[])
  {
    int *p = malloc(sizeof(int));
