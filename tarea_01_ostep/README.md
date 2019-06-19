@@ -9,8 +9,8 @@ Los ejercicios realizados fueron los siguientes:
 * Virtualización
 
 * [mem.c](mem.c)
-Para la realización de este punto, fue necesesario tener en cuenta el archivo de 
-cabecera:
+
+Para la realización de este punto, fue necesesario tener en cuenta el archivo de cabecera:
 
 * [common.h](common.h)
 
