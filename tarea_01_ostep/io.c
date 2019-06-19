@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
  {
   FILE *archivo;
   int Lp, posActual; //Lp = LastPosition ; posActual = PosiciónActual
-  
+  posActual=1;  
 
 //VALIDACIÓN-EXISTENCIA DE ARCHIVO DE TEXTO//
 if((archivo = fopen(argv[1],"r"))!=NULL)
@@ -19,7 +19,7 @@ if((archivo = fopen(argv[1],"r"))!=NULL)
            posActual++;
            fseek(archivo,-posActual,SEEK_END);
            printf("%c",fgetc(archivo));
-           
+
           }
          printf("\n");
          fclose(archivo);
