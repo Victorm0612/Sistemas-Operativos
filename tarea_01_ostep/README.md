@@ -54,6 +54,21 @@ gcc -pthread threads.c -o threads && ./threads 1000000
 
 ### Persistencia
 
+Para resolver este ejercicio era necesario pensar primero en las variables globales que necesitabamos para una futura iteración. 
+Estas variables son: Lp (que contiene la última posición a la que deseo llegar) y posActual (que contiene la posición en la que
+me estaré ubicando y que inicializará en uno para que al momento de retroceder dos posiciones continue con la penúltima letra del archivo).
+Luego de definir las variables globales que vamos a usar; debemos plantear cómo validar que el archivo que se pasa por entrada
+exista. Para eso, fue necesario realizar un sencillo if que comprobaba que el parámetro encontrado en la posición
+uno(1),al ser abierto, era diferente de NULL. Si es así, quiere decir que el archivo existe y podemos trabajar. Si no,
+entonces el programa mostrará un mensaje que solicita revisar lo digitado. Luego de esta comprobación, en caso de que
+pueda trabajar el documento de entrada, abrimos el documento que contiene las palabras. Luego, gracias a la función
+fseek, nos ubicaremos al final del documento justo en la última letra y seguido, asignamos a la variable Lp la variable númerica a la que deseamos llegar.
+
+
+
+
+El archivo dónde se encuentra el código de io (palabras al revés) es:
+
 * [io.c](io.c)
 
 ```
