@@ -6,7 +6,7 @@
 
 Los ejercicios realizados fueron los siguientes:
 
-* Virtualización
+###Virtualización
 
 * [mem.c](mem.c)
 
@@ -22,9 +22,8 @@ Para ver el funcionamiento de este programa, ejecutar la siguiente instrucción:
 
 ```
 gcc mem.c -o mem && ./mem
-
 ```
-* Concurrencia
+###Concurrencia
 
 Para cumplir con lo requerido se debía pensar
 
@@ -32,13 +31,12 @@ Para cumplir con lo requerido se debía pensar
 
 ```
 gcc -pthread threads.c -o threads && ./threads 1000000
-
 ```
 
-* Persistencia
+###Persistencia
 
 * [io.c](io.c)
+
 ```
 gcc io.c -o io && ./io
-
 ```
