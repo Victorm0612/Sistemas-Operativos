@@ -63,7 +63,10 @@ uno(1),al ser abierto, era diferente de NULL. Si es así, quiere decir que el ar
 entonces el programa mostrará un mensaje que solicita revisar lo digitado. Luego de esta comprobación, en caso de que
 pueda trabajar el documento de entrada, abrimos el documento que contiene las palabras. Luego, gracias a la función
 fseek, nos ubicaremos al final del documento justo en la última letra y seguido, asignamos a la variable Lp la variable númerica a la que deseamos llegar.
-
+Por útlimo y no menos importante, realizamos un bucle que va desde la posición en la que nos encontramos hasta la posición a la que deseamos llegar.
+Mientras no hayamos llegado, mostraremos la letra que está ubicada en la posición en la que nos encontramos, luego retrocedemos dos(2) posiciones y por último
+aumentamos la variable posActual para seguir iterando. Cumplido el bucle, nos ubicaremos en la última letra que nos falta con fseek y SEEK_CUR para pasarla 
+por pantalla. Hacemos un salto de línea para mejorar la presentación de lo que sale por pantalla, cerramos el archivo y finalizamos el programa retornando 0.
 
 
 
