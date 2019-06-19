@@ -12,12 +12,12 @@ Los ejercicios realizados fueron los siguientes:
 Para la realización de este punto, fue necesesario tener en cuenta el archivo de 
 cabecera:
 
-*[common.h](common.h)
+* [common.h](common.h)
 
 Puesto que permitia el correcto funcionamiento del archivo mem.c. Lo siguiente es que
 para mostrar la dirección a la que apunta p, fue necesario usar la función getpid() que
 obtiene el identificador del proceso que se está ejecutando.
----------------------------------------------------------------------------------------  
+ 
 Para ver el funcionamiento de este programa, ejecutar la siguiente instrucción:
 
 ```
