@@ -75,5 +75,5 @@ El archivo dónde se encuentra el código de io (palabras al revés) es:
 * [io.c](io.c)
 
 ```
-gcc io.c -o io && ./io
+gcc io.c -o io && ./io text
 ```
