@@ -14,6 +14,8 @@ gcc fork-basico_01.c -o fork-basico_01 && ./fork-basico_01
 
 El proceso niño y el padre pueden acceder al archivo y editarlo. El problema está en que lo escrito por un proceso, modifican lo escrito por el otro.
 
+* [Ejercicio_02](fork-file_02.c)
+
 ```
 gcc fork-file_02.c -o fork-file_02 && ./fork-file_02 prueba
 ```
