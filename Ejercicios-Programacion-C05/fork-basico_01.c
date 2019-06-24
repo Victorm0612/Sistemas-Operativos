@@ -20,7 +20,11 @@ int main(int argc, char** argv)
   char p[] = "padre", h[] = "hijo";
   pid_t pid;
   pid = fork();
-  if(pid == 0)
+  if (pid < 0)
+   {
+    fprintf(stderr, "fork fallido\n");
+   }
+  else if (pid == 0)
   {
    iterar(x,h);
   }
