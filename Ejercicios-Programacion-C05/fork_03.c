@@ -10,6 +10,7 @@ int main(int argc, char** argv)
   if(pid < 0)
    {
     fprintf(stderr, "fork fallido.\n");
+    exit(1);
    }
   else if(pid == 0)
    {
@@ -17,7 +18,7 @@ int main(int argc, char** argv)
    }
   else
    {
-    sleep(1);
     printf("goodbye.\n");
    }
+  return 0;
  }
