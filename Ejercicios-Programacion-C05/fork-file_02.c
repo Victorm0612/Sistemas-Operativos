@@ -12,7 +12,11 @@ int main(int argc, char** argv)
   {
    archivo=fopen(argv[1],"w+");
    pid = fork();
-   if(pid == 0)
+   if (pid < 0)
+   {
+    fprintf(stderr, "fork fallido.\n");
+   }
+   else if(pid == 0)
    {
     fprintf(archivo, "Soy el hijo...\n");
    }
