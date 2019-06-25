@@ -18,13 +18,14 @@ int main(int argc, char** argv)
    else if(pid == 0)
    {
     printf("Usando execvp:\n");
-    execv(args[0],args);
+    execvp(args[0],args);
     
    }
   else
    {
     sleep(1);
-    printf("Usando exec:\n");
+    printf("Usando execv:\n");
+    execv(args[0],args);
    }
   return 0;
  }
