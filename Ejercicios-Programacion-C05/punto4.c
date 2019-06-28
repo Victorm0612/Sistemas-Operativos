@@ -6,7 +6,6 @@
  * Modificación: Juan Gonzales - Victor Vargas - Aida Mina  
  * Version: 1.0
  * ESCUELA DE SISTEMAS Y COMPUTACION
- ddd
 */
 
 
