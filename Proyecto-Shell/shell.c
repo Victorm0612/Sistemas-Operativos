@@ -1,371 +1,301 @@
-#include <sys/types.h>
+
+
+/*
+ * Asignatura: SISTEMAS OPERATIVOS
+ * Archivo: shell.c
+ * Fecha de creacion: 25-Junio-2019
+ * Fecha ultima modificación: 10-Julio-2019
+ * Modificación: Juan Gonzales - Victor Vargas - Aida Mina  
+ * Version: 1.9
+ * ESCUELA DE SISTEMAS Y COMPUTACION
+*/
+
+#include<stdio.h> 
+#include<string.h> 
+#include<stdlib.h> 
+#include<unistd.h> 
+#include<sys/types.h> 
 #include <dirent.h>
-#include <stdio.h>
-#include <unistd.h>
-#include<sys/wait.h>
-#include <stdlib.h>
-#include <string.h>
-enum internalCommands{cd=1, environ, echo, help, general};
-#define MAX_SIZE 100
-
-char* myCommand(char* command, char* subcommand);
-void interpretGeneralCommand(char *command, char* args[]);
-void interpretInternalCommand(char *command, char* args[]);
-void readCommand(char *command);
-int countSpaces(char* command);
-int takeOption(char* command);
-void interCommandsMenu();
-void helpCommand(char *aux, char* args[]);
-void dirCommand(char * command);
-void clrCommand();
-void pauseCommand();
-void takeDirName(char* command, char* dirname);
-void processCommand(char* command, char* args[]);
-char* takeSubCommand(char* command);
-
-
-int main(int argc, char *argv[], char * envp[])
-{
-
-	pid_t value; 
-	char* command; 
-	char *args[20];
-	//Reserva memoria de manera dinamica
-	command = (char*) malloc(sizeof (char *));
-	int cont=0;
-	
-			
-	do{
-		
-		readCommand(command);//Invoca función para leer el comando
-		
-		if (strcmp("quit", command) == 0) break;
-		
-		if (strcmp("clr", command) == 0)
-		{
-			clrCommand();
-		}else
-		if(strcmp("pause", command) == 0)
-		{
-			pauseCommand();
-		}else
-		if(strcmp("dir <", takeSubCommand(command)) == 0)//Modificar posicion
-		{
-			dirCommand(command);
-		}else
-		{
-			processCommand(command, args);//Invoca función para procesar el comando
-			
-			value = fork();
-			if(value == 0)
-			{
-				//Proceso hijo
-				execvp(args[0], args);//Invoca una llamada al sistema de la famila exec para ejecutar los comandos
-				printf("\nEsto no deberia imprimirse.\n");
-
-			}else
-			{
-				//Proceso padre
-				wait(NULL);//Espera hasta que su hijo finalice
-			
-			}
-		}
-		
-			
-		//Contador provicional
-		cont ++;
-		
-
-	}while(cont<10);
-
-	//Liberación de memoria
-	free(command);
-	
-	
-	return 0;	
-}
-
-
-char* myCommand(char* command, char* subcommand)
-{
-	//Recorrer comando
-	int i=0;
-	int j=0;
-	int contador=0;
-	char *aux;
-	aux = (char*) malloc(sizeof (char *));
-	while( i < strlen(command) && command[i] != '\n')
-	{
-			
-		if (command[i] == 32)
-		{
-			
-			contador++;
-		}
-
-		if (contador == 0)
-		{
-			aux[i]=command[i]; //Revisar 
-		}else
-		{
-			command[j]=command[i+1];
-			
-			j++;
-		}
-	
-			i++;
-	}
-	strcpy(subcommand, aux);
-	free(aux);
-	return subcommand;
-	
-}
-
-int countSpaces(char* command)
-{
-	//Recorrer comando
-	int i=0;
-	int contador=0;
-	while( i < strlen(command) && command[i] != '\n')
-	{
-			
-		if (command[i] == 32)
-		{
-			
-			contador++;
-		}
-
-		i++;
-	}
-	return contador;
-}
-
-void interpretInternalCommand(char *command, char* args[])
-{
-	char * aux;
-	aux= (char *)malloc(sizeof(char *));
-	int option = takeOption(command);
-	switch(option)
-	{
-		
-		case help:
-			helpCommand(aux, args);
-		break;
-
-		//default:
-	}
-
-	free(aux);
-}
-
-void interpretGeneralCommand(char *command, char* args[])
-{
-	char * subcommand;
-	subcommand = (char*) malloc(sizeof (char *)); 
-	int counter = countSpaces(command);//Invocación de la función
-
-	for(int j=0; j< (counter + 1); j++)
-	{
-		//Permite strdup duplicar un string
-		args[j] =strdup(myCommand(command, subcommand));//Invoca a la función 
-
-	}
-	args[counter+1] = NULL;
-	free(subcommand);
-}
-
-void readCommand(char *command)
-{
-
-	printf("prompt>");
-	//Leer comando
-	fgets(command, MAX_SIZE, stdin);
-	//Eliminar la nueva linea final si la hay
-	if ((strlen(command) > 0) && (command[strlen (command) - 1] == '\n'))
-       	{
-		command[strlen (command) - 1] = '\0';
-	}
-
-}
-
-int takeOption(char* command)
-{
-	if(strcmp(command, "cd") == 0)
-	{
-		return 1;
-	}else 
-	if(strcmp(command, "environ") == 0)
-	{
-		return 2;
-	}else
-	if(strcmp(command, "echo") == 0)
-	{
-		return 3;
-	}else
-	if(strcmp(command, "help" )== 0)
-	{
-		return 4;
-	}else 
-	{
-		return 5;
-	}
-
-}
-void processCommand(char* command, char* args[])
-{
-	int option = takeOption(command);
-	switch(option)
-	{
-		case cd:
-			printf("cd\n");
-		break;
-		case environ:
-			printf("environ\n");
-		break;
-		case echo:
-			printf("echo\n");
-		break;
-		case help:
-			interpretInternalCommand(command, args);
-		break;
-		default:
-			interpretGeneralCommand(command, args);
-	}
-
-
+#include<sys/wait.h> 
+#include<readline/readline.h> 
+#include<readline/history.h> 
+  
+#define MAXCOM 1000 // máximo número de letras que se pueden soportar 
+#define MAXLIST 100 // máximo número de comandos que se pueden soportar
+  
+  
+// Function to take input 
+int DatosEntrada(char* str) 
+{ 
+    char* buf; 
+  
+    buf = readline("\nprompt> "); 
+    if (strlen(buf) != 0) {
+       strcpy(str, buf); 
+        return 0; 
+    } else { 
+        return 1; 
+    } 
+} 
+  
+// Function to print Current Directory. 
+void printDir() 
+{ 
+    char cwd[1024]; 
+    getcwd(cwd, sizeof(cwd)); 
+    printf("\nDir: %s", cwd); 
+} 
+  
+// Function where the system command is executed 
+void execArgs(char** parsed) 
+{ 
+    // Forking a child 
+    pid_t pid = fork();  
+  
+    if (pid == -1) { 
+        printf("\nFailed forking child.."); 
+        return; 
+    } else if (pid == 0) { 
+        if (execvp(parsed[0], parsed) < 0) { 
+            printf("\nCould not execute command.."); 
+        } 
+        exit(0); 
+    } else { 
+        // waiting for child to terminate 
+        wait(NULL);  
+        return; 
+    } 
+} 
+  
+// Function where the piped system commands is executed 
+void execArgsPiped(char** parsed, char** parsedpipe) 
+{ 
+    // 0 is read end, 1 is write end 
+    int pipefd[2];  
+    pid_t p1, p2; 
+  
+    if (pipe(pipefd) < 0) { 
+        printf("\nPipe could not be initialized"); 
+        return; 
+    } 
+    p1 = fork(); 
+    if (p1 < 0) { 
+        printf("\nCould not fork"); 
+        return; 
+    } 
+  
+    if (p1 == 0) { 
+        // Child 1 executing.. 
+        // It only needs to write at the write end 
+        close(pipefd[0]); 
+        dup2(pipefd[1], STDOUT_FILENO); 
+        close(pipefd[1]); 
+  
+        if (execvp(parsed[0], parsed) < 0) { 
+            printf("\nCould not execute command 1.."); 
+            exit(0); 
+        } 
+    } else { 
+        // Parent executing 
+        p2 = fork(); 
+  
+        if (p2 < 0) { 
+            printf("\nCould not fork"); 
+            return; 
+        } 
+  
+        // Child 2 executing.. 
+        // It only needs to read at the read end 
+        if (p2 == 0) { 
+            close(pipefd[1]); 
+            dup2(pipefd[0], STDIN_FILENO); 
+            close(pipefd[0]); 
+            if (execvp(parsedpipe[0], parsedpipe) < 0) { 
+                printf("\nCould not execute command 2.."); 
+                exit(0); 
+            } 
+        } else { 
+            // parent executing, waiting for two children 
+            wait(NULL); 
+            wait(NULL); 
+        } 
+    } 
+} 
+  
+// Help command builtin 
+void Ayuda() 
+{ 
+   printf("\n--- BIENVENIDO A SHELL ---"
+                          "\n La lista de comandos internos disponibles es:"
+                          "\n * cd <directorio>: Cambiar el directorio"
+                          "\n * clr: Limpiar la pantalla"
+                          "\n * dir <directorio>: Listar el contenido del directorio"
+                          "\n * environ: Listar todas las cadenas de entorno"
+                          "\n * echo <comentario>: Desplegar el comentario en pantalla"
+                          "\n * help: Desplegar el manual de usuario"
+                          "\n * pause: Deterner la operación del shell hasta que se presiona enter"
+                          "\n * quit: Salir de MYSHELL"); 
+  
+    return; 
+} 
+//Función que pausa el proceso
+void parar()
+{       
+        char op;
+        do{
+                printf("Pausado..."
+                        "\nPresionar enter para continuar...");
+                op= getchar();
+        }
+       while(op != '\n');
 }	
 
+//Función para limpiar pantalla
 void clrCommand()
 {
-	const char* CLEAR_SCREEN_ANSI = "\e[1;1H\e[2J";
-	write(STDOUT_FILENO,CLEAR_SCREEN_ANSI,12);
-	
+        const char* CLEAR_SCREEN_ANSI = "\e[1;1H\e[2J";
+        write(STDOUT_FILENO,CLEAR_SCREEN_ANSI,12);
 }
 
-void pauseCommand()
-{	
-	char op;
-	do{
-		printf("Pausado..."
-	       		"\nPresionar enter para continuar...");
-		op= getchar();
-
-	}while(op != '\n');
-
-}
-void helpCommand(char *aux, char* args[])
+void dirCommand()
 {
-	aux =strdup("\n--- BIENVENIDO A MYSHELL ---"
-			  "\n La lista de comandos internos disponibles es:"
-			  "\n * cd <directorio>: Cambiar el directorio"
-			  "\n * clr: Limpiar la pantalla"
-			  "\n * dir <directorio>: Listar el contenido del directorio"
-         		  "\n * environ: Listar todas las cadenas de entorno"
-         		  "\n * echo <comentario>: Desplegar el comentario en pantalla"
-         		  "\n * help: Desplegar el manual de usuario"
-         		  "\n * pause: Deterner la operación del shell hasta que se presiona enter"
-         		  "\n * quit: Salir de MYSHELL");
-	args[0]= "more";
-	args[1]= aux;
-	args[2]= NULL;
-
+  char *args[] ={"/bin/ls",NULL};
+  execvp(args[0],args);
 }
-void takeDirName(char* command, char* dirname)
-{
-	//Recorrer comando
-	int i=0, j=0, contador=0;
-	char *aux;
-	aux = (char*) malloc(sizeof (char *));
-	while( i < strlen(command) && command[i] != '>')
-	{
+  
+// Function to execute builtin commands 
+int ownCmdHandler(char** parsed) 
+{ 
+    int total = 8, i, eleccion = 0; 
+    char* Comandos[total];   
+    Comandos[0] = "cd"; 
+    Comandos[1] = "clr"; 
+    Comandos[2] = "dir"; 
+    Comandos[3] = "environ";
+    Comandos[4] = "echo";
+    Comandos[5] = "help";
+    Comandos[6] = "pause";
+    Comandos[7] = "quit"; 
+  
+    for (i = 0; i < total; i++) { 
+        if (strcmp(parsed[0], Comandos[i]) == 0) { 
+            eleccion = i + 1; 
+            break; 
+        } 
+    } 
+  
+    switch (eleccion) { 
+    case 1: 
+        chdir(parsed[1]); 
+    case 2: 
+        clrCommand(); 
+        return 1; 
+    case 3: 
+        dirCommand();
+    case 4: 
+        //environ
+        return 1;
+   case 5:
+       //echo
+       return 1;
+   case 6:
+        Ayuda();
+        return 1;
+   case 7:
+       parar();
+     return 1;
+   case 8:
+      exit(0);
+    default: 
+        break; 
+    } 
+  
+    return 0; 
+} 
 
-		if(command[i] == 32)
-		{
-			contador ++;
-			
-		}
-		if(contador == 1)
-		{
-			if(command[i] != '>' && command[i] != '<' && command[i] != 32)
-			{
-				aux[j]=command[i];
-				j++;
-			}
-		} 
-				
-		i++;
-	}
-
-	strcpy(dirname, aux);
-	free(aux);
-	
-}
-
-void dirCommand(char * command)
-{
-	DIR *dir;
-	struct dirent *sd;
-	char *dirname;
-	char * path;
-	char buffer[1024]=" ";
-	dirname = (char*) malloc(sizeof (char *));
-
-	if(countSpaces(command) == 1)
-	{
-		takeDirName(command,dirname);
-		path = realpath(dirname, NULL);
-		if (path == NULL)
-		{
-			perror("Error!!\n");
-			exit(1);
-		}else
-		{
-			printf("%s\n", path);
-			dir = opendir(path);
-			if (dir == NULL)
-			{
-				printf("\nError!! Al abrir el directorio.\n");
-			
-			}
-			
-			while((sd= readdir(dir)) != NULL)
-			{
-				printf("%s\n", sd->d_name);
-			}
-			closedir(dir);
-			
-		}	
-		
-	}else
-	{
-		perror("Commando no valido!!");
-	} 
-	free(dirname);
-	
-}
-
-char* takeSubCommand(char* command)
-{
-	//Recorrer comando
-	int i=0;
-	char *aux=(char*) malloc(10);
-
-	while( i < strlen(command) && command[i] != '\n')
-	{
-		
-		aux[i]=command[i];
-		i++;
-		if(command[i] == '<')
-		{
-			aux[i]=command[i];
-			break;
-	
-		}	
-		
-	}
-
-	return aux;
-	
-}
-
+  
+// function for finding pipe 
+int parsePipe(char* str, char** strpiped) 
+{ 
+    int i; 
+    for (i = 0; i < 2; i++) { 
+        strpiped[i] = strsep(&str, "|"); 
+        if (strpiped[i] == NULL) 
+            break; 
+    } 
+  
+    if (strpiped[1] == NULL) 
+        return 0; // returns zero if no pipe is found. 
+    else { 
+        return 1; 
+    } 
+} 
+  
+// function for parsing command words 
+void parseSpace(char* str, char** parsed) 
+{ 
+    int i; 
+  
+    for (i = 0; i < MAXLIST; i++) { 
+        parsed[i] = strsep(&str, " "); 
+  
+        if (parsed[i] == NULL) 
+            break; 
+        if (strlen(parsed[i]) == 0) 
+            i--; 
+    } 
+} 
+  
+int processString(char* str, char** parsed, char** parsedpipe) 
+{ 
+  
+    char* strpiped[2]; 
+    int piped = 0; 
+  
+    piped = parsePipe(str, strpiped); 
+  
+    if (piped) { 
+        parseSpace(strpiped[0], parsed); 
+        parseSpace(strpiped[1], parsedpipe); 
+  
+    } else { 
+  
+        parseSpace(str, parsed); 
+    } 
+  
+    if (ownCmdHandler(parsed)) 
+        return 0; 
+    else
+        return 1 + piped; 
+} 
+  
+int main() 
+{ 
+    char inputString[MAXCOM], *parsedArgs[MAXLIST]; 
+    char* parsedArgsPiped[MAXLIST]; 
+    int execFlag = 0; 
+     
+  
+    while (1) { 
+         
+        // take input 
+        if (DatosEntrada(inputString)) 
+            continue; 
+        // process 
+        execFlag = processString(inputString, 
+        parsedArgs, parsedArgsPiped); 
+        // execflag returns zero if there is no command 
+        // or it is a builtin command, 
+        // 1 if it is a simple command 
+        // 2 if it is including a pipe. 
+  
+        // execute 
+        if (execFlag == 1) 
+            execArgs(parsedArgs); 
+  
+        if (execFlag == 2) 
+            execArgsPiped(parsedArgs, parsedArgsPiped); 
+    } 
+    return 0; 
+} 
 
