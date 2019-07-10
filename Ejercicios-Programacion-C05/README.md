@@ -33,4 +33,35 @@ gcc punto3.c -o punto3 && ./punto3
 
 ### Ejercicio 04:
 
+La razón por la cuál existan tantas variantes es debido a los argumentos que se pasan por entrada, esto, con el propósito de mejorar la manera de realizar el reemplazo de procesos.
+
+```
+gcc punto4.c -o punto4 && ./punto4
+```
+
+### Ejercicio 05:
+
+Originalmente, el wait retorna el PID del proceso child. Al poner un wait en el proceso child, el pid que retorna es -1 y esto es debido a que no no hay ningún proceso secundario.
+
+```
+gcc punto5.c -o punto5 && ./punto5
+```
+
+### Ejercicio 06:
+
+La función waitpid puede ser útil cuando en vez de trabajar con procesos child de manera arbitraria, vamos a trabajar o queremos trabajar con el proceso child en específico.
+
+```
+gcc punto6.c -o punto6 && ./punto6
+```
+
+### Ejercicio 07:
+
+Al tratar de imprimir algo luego de cerrar el flujo, tal cosa no sucede. Sin importar qué sea, lo que se desea imprimir, no lo hace.
+
+```
+gcc punto7.c -o punto7 && ./punto7
+```
+
+
 
