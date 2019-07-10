@@ -35,6 +35,8 @@ gcc punto3.c -o punto3 && ./punto3
 
 La razón por la cuál existan tantas variantes es debido a los argumentos que se pasan por entrada, esto, con el propósito de mejorar la manera de realizar el reemplazo de procesos.
 
+* [Ejercicio_04](punto4.c)
+
 ```
 gcc punto4.c -o punto4 && ./punto4
 ```
@@ -42,6 +44,8 @@ gcc punto4.c -o punto4 && ./punto4
 ### Ejercicio 05:
 
 Originalmente, el wait retorna el PID del proceso child. Al poner un wait en el proceso child, el pid que retorna es -1 y esto es debido a que no no hay ningún proceso secundario.
+
+* [Ejercicio_05](punto5.c)
 
 ```
 gcc punto5.c -o punto5 && ./punto5
@@ -51,6 +55,8 @@ gcc punto5.c -o punto5 && ./punto5
 
 La función waitpid puede ser útil cuando en vez de trabajar con procesos child de manera arbitraria, vamos a trabajar o queremos trabajar con el proceso child en específico.
 
+* [Ejercicio_06](punto6.c)
+
 ```
 gcc punto6.c -o punto6 && ./punto6
 ```
@@ -58,6 +64,8 @@ gcc punto6.c -o punto6 && ./punto6
 ### Ejercicio 07:
 
 Al tratar de imprimir algo luego de cerrar el flujo, tal cosa no sucede. Sin importar qué sea, lo que se desea imprimir, no lo hace.
+
+* [Ejercicio_07](punto7.c)
 
 ```
 gcc punto7.c -o punto7 && ./punto7
