@@ -61,7 +61,7 @@ int main(int argc, char *argv[], char * envp[])
 			{
 				//Proceso hijo
 				execvp(args[0], args);//Invoca una llamada al sistema de la famila exec para ejecutar los comandos
-				printf("Esto no deberia imprimirse");
+				printf("\nEsto no deberia imprimirse.\n");
 
 			}else
 			{
@@ -324,7 +324,7 @@ void dirCommand(char * command)
 			dir = opendir(path);
 			if (dir == NULL)
 			{
-				printf("Error!! Al abrir el directorio.\n");
+				printf("\nError!! Al abrir el directorio.\n");
 			
 			}
 			
