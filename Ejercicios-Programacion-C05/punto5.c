@@ -48,7 +48,7 @@ void myfork(pid_t value, pid_t cpid)
 	
 		//Proceso hijo
 		cpid = wait(NULL);
-		printf("%d: Soy el proceso hijo, el pid de mi hijo es %d\n", (int)getpid(), (int)cpid);
+		printf("%d: Soy el proceso hijo, el pid de mi padre es %d\n", (int)getpid(), (int)cpid);
 		
 	}else
 	{
