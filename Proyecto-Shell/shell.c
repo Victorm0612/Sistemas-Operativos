@@ -13,7 +13,7 @@
 #include<stdlib.h> 
 #include<unistd.h> 
 #include<sys/types.h> 
-#include <dirent.h>
+#include<dirent.h>
 #include<sys/wait.h> 
 #include<readline/readline.h> 
 
@@ -40,7 +40,7 @@ void printDir()
 {    
     getcwd(cwd, sizeof(cwd));
     getcwd(shell, sizeof(cwd));
-   printf("$PWD = %s:   $shell=%s\n",cwd,shell); 
+    printf("$PWD = %s:   $shell=%s\n",cwd,shell); 
 } 
 
 // Función para ejecución de argumentos 
@@ -54,9 +54,9 @@ void execArgs(char** parsed)
     } 
    else if (pid == 0)
     {
-      execvp(parsed[0], parsed); 
+      if(execvp(parsed[0], parsed)< 0){ 
       printf("\nEste comando no se puede ejecutar."); 
-      exit(0); 
+      exit(0); }
     }
    else
     {
@@ -96,6 +96,7 @@ void clrCommand()
 {
         const char* CLEAR_SCREEN_ANSI = "\e[1;1H\e[2J";
         write(STDOUT_FILENO,CLEAR_SCREEN_ANSI,12);
+  return;
 }
 
 //Función que enlista los archivos contenidos
@@ -113,7 +114,6 @@ void dirCommand()
  { 
   while((ent = readdir (dir)) != NULL)
    {
-    printf("%u. %s\n",i, ent->d_name);
    } 
  }
  return;
@@ -127,12 +127,14 @@ void cdDir(char** parsed)
   if (dir == NULL)
     {
      printf("Error!! Al abrir el directorio.\n");
+     return;
     } 
    else 
     {
      chdir(parsed[1]);
-    }      
-}  
+     return;
+    }
+ }  
 // Función para ejecutar comandos
 int ComandosCreados(char** parsed) 
 { 
@@ -163,6 +165,7 @@ int ComandosCreados(char** parsed)
         return 1; 
     case 3: 
         dirCommand(parsed);
+       return 1;
     case 4:
         printDir();
         return 1;
@@ -180,7 +183,6 @@ int ComandosCreados(char** parsed)
     default: 
         break; 
     } 
-  
     return 0; 
 } 
 
@@ -210,13 +212,12 @@ int processString(char* str, char** parsed)
 int main() 
 { 
     char inputString[MAXCOM], *parsedArgs[MAXLIST]; 
-    int execFlag; 
-    
-    while (1) { 
+    int execFlag;
+    while (1) {
         // Capturar datos de entrada 
         if (DatosEntrada(inputString)) 
             continue; 
-        // proceso  
+        // proceso 
         execFlag = processString(inputString,parsedArgs); 
         execArgs(parsedArgs);
     } 
