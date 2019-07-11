@@ -16,7 +16,7 @@
 #include <dirent.h>
 #include<sys/wait.h> 
 #include<readline/readline.h> 
-#include<readline/history.h> 
+
   
 #define MAXCOM 1000 // máximo número de letras que se pueden soportar 
 #define MAXLIST 100 // máximo número de comandos que se pueden soportar
@@ -25,8 +25,7 @@ char shell[1024];
 // Función que recibe datos de entrada 
 int DatosEntrada(char* str) 
 { 
-    char* buf; 
-  
+    char* buf;   
     buf = readline("\nprompt> "); 
     if (strlen(buf) != 0) {
        strcpy(str, buf); 
@@ -46,79 +45,25 @@ void printDir()
 
 // Función para ejecución de argumentos 
 void execArgs(char** parsed) 
-{ 
-    // Forking a child 
-    pid_t pid = fork();  
-  
-    if (pid == -1) { 
-        printf("\nFailed forking child.."); 
-        return; 
-    } else if (pid == 0) { 
-        if (execvp(parsed[0], parsed) < 0) { 
-            printf("\nCould not execute command.."); 
-        } 
-        exit(0); 
-    } else {  
-        wait(NULL);  
-        return; 
+{  
+  pid_t pid = fork();    
+  if (pid == -1) 
+    { 
+      printf("\nfork niño fallido.."); 
+      return; 
     } 
-} 
-  
-// Function where the piped system commands is executed 
-void execArgsPiped(char** parsed, char** parsedpipe) 
-{ 
-    // 0 is read end, 1 is write end 
-    int pipefd[2];  
-    pid_t p1, p2; 
-  
-    if (pipe(pipefd) < 0) { 
-        printf("\nPipe could not be initialized"); 
-        return; 
+   else if (pid == 0)
+    {
+      execvp(parsed[0], parsed); 
+      printf("\nEste comando no se puede ejecutar."); 
+      exit(0); 
+    }
+   else
+    {
+       wait(NULL);  
+       return; 
     } 
-    p1 = fork(); 
-    if (p1 < 0) { 
-        printf("\nCould not fork"); 
-        return; 
-    } 
-  
-    if (p1 == 0) { 
-        // Child 1 executing.. 
-        // It only needs to write at the write end 
-        close(pipefd[0]); 
-        dup2(pipefd[1], STDOUT_FILENO); 
-        close(pipefd[1]); 
-  
-        if (execvp(parsed[0], parsed) < 0) { 
-            printf("\nCould not execute command 1.."); 
-            exit(0); 
-        } 
-    } else { 
-        // Parent executing 
-        p2 = fork(); 
-  
-        if (p2 < 0) { 
-            printf("\nCould not fork"); 
-            return; 
-        } 
-  
-        // Child 2 executing.. 
-        // It only needs to read at the read end 
-        if (p2 == 0) { 
-            close(pipefd[1]); 
-            dup2(pipefd[0], STDIN_FILENO); 
-            close(pipefd[0]); 
-            if (execvp(parsedpipe[0], parsedpipe) < 0) { 
-                printf("\nCould not execute command 2.."); 
-                exit(0); 
-            } 
-        } else { 
-            // parent executing, waiting for two children 
-            wait(NULL); 
-            wait(NULL); 
-        } 
-    } 
-} 
-  
+}
 // Menú de ayuda
 void Ayuda() 
 { 
@@ -131,10 +76,9 @@ void Ayuda()
                           "\n * echo <comentario>: Desplegar el comentario en pantalla"
                           "\n * help: Desplegar el manual de usuario"
                           "\n * pause: Deterner la operación del shell hasta que se presiona enter"
-                          "\n * quit: Salir de MYSHELL"); 
-  
+                          "\n * quit: Salir de SHELL");  
     return; 
-} 
+}
 //Función que pausa el proceso
 void parar()
 {       
@@ -172,6 +116,7 @@ void dirCommand()
     printf("%u. %s\n",i, ent->d_name);
    } 
  }
+ return;
 }
 
 //Función que cambia a otra carpeta si es que esta existe.
@@ -239,32 +184,13 @@ int ComandosCreados(char** parsed)
     return 0; 
 } 
 
-  
-// function for finding pipe 
-int parsePipe(char* str, char** strpiped) 
-{ 
-    int i; 
-    for (i = 0; i < 2; i++) { 
-        strpiped[i] = strsep(&str, "|"); 
-        if (strpiped[i] == NULL) 
-            break; 
-    } 
-  
-    if (strpiped[1] == NULL) 
-        return 0; // returns zero if no pipe is found. 
-    else { 
-        return 1; 
-    } 
-} 
-  
+
 // Función que realiza el parsing de los comandos digitados
 void parseSpace(char* str, char** parsed) 
 { 
-    int i; 
-  
+    int i;  
     for (i = 0; i < MAXLIST; i++) { 
         parsed[i] = strsep(&str, " "); 
-  
         if (parsed[i] == NULL) 
             break; 
         if (strlen(parsed[i]) == 0) 
@@ -272,52 +198,27 @@ void parseSpace(char* str, char** parsed)
     } 
 } 
   
-int processString(char* str, char** parsed, char** parsedpipe) 
+int processString(char* str, char** parsed) 
 { 
-  
-    char* strpiped[2]; 
-    int piped = 0; 
-  
-    piped = parsePipe(str, strpiped); 
-  
-    if (piped) { 
-        parseSpace(strpiped[0], parsed); 
-        parseSpace(strpiped[1], parsedpipe); 
-  
-    } else { 
-  
-        parseSpace(str, parsed); 
-    } 
-  
-    if (ComandosCreados(parsed)) 
-        return 0; 
+   parseSpace(str, parsed); 
+   if(ComandosCreados(parsed))
+      return 0; 
     else
-        return 1 + piped; 
+      return 1;
 } 
   
 int main() 
 { 
     char inputString[MAXCOM], *parsedArgs[MAXLIST]; 
-    char* parsedArgsPiped[MAXLIST]; 
-    int execFlag = 0; 
+    int execFlag; 
     
     while (1) { 
-        // take input 
+        // Capturar datos de entrada 
         if (DatosEntrada(inputString)) 
             continue; 
-        // process 
-        execFlag = processString(inputString,parsedArgs, parsedArgsPiped); 
-        // execflag returns zero if there is no command 
-        // or it is a builtin command, 
-        // 1 if it is a simple command 
-        // 2 if it is including a pipe. 
-  
-        // execute 
-        if (execFlag == 1) 
-            execArgs(parsedArgs); 
-  
-        if (execFlag == 2) 
-            execArgsPiped(parsedArgs, parsedArgsPiped); 
+        // proceso  
+        execFlag = processString(inputString,parsedArgs); 
+        execArgs(parsedArgs);
     } 
     return 0; 
 }  
