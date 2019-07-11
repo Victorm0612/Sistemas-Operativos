@@ -21,7 +21,7 @@
 #define MAXCOM 1000 // máximo número de letras que se pueden soportar 
 #define MAXLIST 100 // máximo número de comandos que se pueden soportar
 char cwd[1024];
-char shell[1024];  
+char shell[1024];
 // Función que recibe datos de entrada 
 int DatosEntrada(char* str) 
 { 
@@ -34,12 +34,15 @@ int DatosEntrada(char* str)
         return 1; 
     } 
 } 
-  
+ 
+ void obtenerShell()
+ {
+  getcwd(shell,sizeof(shell));
+ } 
 // Función que imprime el directorio actual. 
 void printDir() 
 {    
     getcwd(cwd, sizeof(cwd));
-    getcwd(shell, sizeof(cwd));
     printf("$PWD = %s:   $shell=%s\n",cwd,shell); 
    return;
 } 
@@ -98,25 +101,7 @@ void clrCommand()
   return;
 }
 
-//Función que enlista los archivos contenidos
-void dirCommand()
-{
-  DIR *dir;
-  dir = opendir(".");
-  struct dirent *ent;
-  size_t i=1;
-  if(dir == NULL)
- {
-  printf("\nDirectorio no encontrado.\n");
- }
- else
- { 
-  while((ent = readdir (dir)) != NULL)
-   {
-   } 
- }
- return;
-}
+
 
 //Función que cambia a otra carpeta si es que esta existe.
 void cdDir(char** parsed)
@@ -126,14 +111,27 @@ void cdDir(char** parsed)
   if (dir == NULL)
     {
      printf("Error!! Al abrir el directorio.\n");
-     return;
-    } 
+     } 
    else 
     {
      chdir(parsed[1]);
-     return;
+     
     }
- }  
+ return;
+ }
+
+//Función que enlista los archivos contenidos
+void dirCommand()
+{
+  DIR *dir;
+  dir = opendir(".");
+  struct dirent *ent;
+  size_t i=1;
+  while((ent = readdir (dir)) != NULL)
+   {} 
+ return;
+}
+  
 // Función para ejecutar comandos
 int ComandosCreados(char** parsed) 
 { 
@@ -163,7 +161,7 @@ int ComandosCreados(char** parsed)
         clrCommand(); 
         return 1; 
     case 3: 
-        dirCommand(parsed);
+        dirCommand();
        return 1;
     case 4:
         printDir();
@@ -213,6 +211,7 @@ int processString(char* str, char** parsed)
 int main() 
 { 
     char inputString[MAXCOM], *parsedArgs[MAXLIST]; 
+    obtenerShell();
     while (1) {
     // Capturar datos de entrada 
     if (DatosEntrada(inputString)) 
