@@ -1,5 +1,3 @@
-
-
 /*
  * Asignatura: SISTEMAS OPERATIVOS
  * Archivo: shell.c
@@ -22,9 +20,9 @@
   
 #define MAXCOM 1000 // máximo número de letras que se pueden soportar 
 #define MAXLIST 100 // máximo número de comandos que se pueden soportar
-  
-  
-// Function to take input 
+char cwd[1024];
+char shell[1024];  
+// Función que recibe datos de entrada 
 int DatosEntrada(char* str) 
 { 
     char* buf; 
@@ -38,15 +36,15 @@ int DatosEntrada(char* str)
     } 
 } 
   
-// Function to print Current Directory. 
+// Función que imprime el directorio actual. 
 void printDir() 
-{ 
-    char cwd[1024]; 
-    getcwd(cwd, sizeof(cwd)); 
-    printf("\nDir: %s", cwd); 
+{    
+    getcwd(cwd, sizeof(cwd));
+    getcwd(shell, sizeof(cwd));
+   printf("$PWD = %s:   $shell=%s\n",cwd,shell); 
 } 
-  
-// Function where the system command is executed 
+
+// Función para ejecución de argumentos 
 void execArgs(char** parsed) 
 { 
     // Forking a child 
@@ -60,8 +58,7 @@ void execArgs(char** parsed)
             printf("\nCould not execute command.."); 
         } 
         exit(0); 
-    } else { 
-        // waiting for child to terminate 
+    } else {  
         wait(NULL);  
         return; 
     } 
@@ -122,7 +119,7 @@ void execArgsPiped(char** parsed, char** parsedpipe)
     } 
 } 
   
-// Help command builtin 
+// Menú de ayuda
 void Ayuda() 
 { 
    printf("\n--- BIENVENIDO A SHELL ---"
@@ -157,14 +154,29 @@ void clrCommand()
         write(STDOUT_FILENO,CLEAR_SCREEN_ANSI,12);
 }
 
+//Función que enlista los archivos contenidos
 void dirCommand()
 {
   char *args[] ={"/bin/ls",NULL};
   execvp(args[0],args);
 }
-  
-// Function to execute builtin commands 
-int ownCmdHandler(char** parsed) 
+
+//Función que cambia a otra carpeta si es que esta existe.
+void cdDir(char** parsed)
+{
+  DIR *dir;
+  dir = opendir(parsed[1]);
+  if (dir == NULL)
+    {
+     printf("Error!! Al abrir el directorio.\n");
+    } 
+   else 
+    {
+     chdir(parsed[1]);
+    }      
+}  
+// Función para ejecutar comandos
+int ComandosCreados(char** parsed) 
 { 
     int total = 8, i, eleccion = 0; 
     char* Comandos[total];   
@@ -185,18 +197,19 @@ int ownCmdHandler(char** parsed)
     } 
   
     switch (eleccion) { 
-    case 1: 
-        chdir(parsed[1]); 
+    case 1:
+       cdDir(parsed);       
+       return 1;
     case 2: 
         clrCommand(); 
         return 1; 
     case 3: 
         dirCommand();
-    case 4: 
-        //environ
+    case 4:
+        printDir();
         return 1;
    case 5:
-       //echo
+       printf("\n%s",parsed[1]);
        return 1;
    case 6:
         Ayuda();
@@ -231,7 +244,7 @@ int parsePipe(char* str, char** strpiped)
     } 
 } 
   
-// function for parsing command words 
+// Función que realiza el parsing de los comandos digitados
 void parseSpace(char* str, char** parsed) 
 { 
     int i; 
@@ -263,7 +276,7 @@ int processString(char* str, char** parsed, char** parsedpipe)
         parseSpace(str, parsed); 
     } 
   
-    if (ownCmdHandler(parsed)) 
+    if (ComandosCreados(parsed)) 
         return 0; 
     else
         return 1 + piped; 
@@ -274,16 +287,13 @@ int main()
     char inputString[MAXCOM], *parsedArgs[MAXLIST]; 
     char* parsedArgsPiped[MAXLIST]; 
     int execFlag = 0; 
-     
-  
+    
     while (1) { 
-         
         // take input 
         if (DatosEntrada(inputString)) 
             continue; 
         // process 
-        execFlag = processString(inputString, 
-        parsedArgs, parsedArgsPiped); 
+        execFlag = processString(inputString,parsedArgs, parsedArgsPiped); 
         // execflag returns zero if there is no command 
         // or it is a builtin command, 
         // 1 if it is a simple command 
@@ -297,5 +307,5 @@ int main()
             execArgsPiped(parsedArgs, parsedArgsPiped); 
     } 
     return 0; 
-} 
+}  
 
