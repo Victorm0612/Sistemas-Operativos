@@ -41,6 +41,7 @@ void printDir()
     getcwd(cwd, sizeof(cwd));
     getcwd(shell, sizeof(cwd));
     printf("$PWD = %s:   $shell=%s\n",cwd,shell); 
+   return;
 } 
 
 // Función para ejecución de argumentos 
@@ -54,9 +55,8 @@ void execArgs(char** parsed)
     } 
    else if (pid == 0)
     {
-      if(execvp(parsed[0], parsed)< 0){ 
-      printf("\nEste comando no se puede ejecutar."); 
-      exit(0); }
+     execvp(parsed[0],parsed);
+     exit(0);
     }
    else
     {
@@ -71,13 +71,12 @@ void Ayuda()
                           "\n La lista de comandos internos disponibles es:"
                           "\n * cd <directorio>: Cambiar el directorio"
                           "\n * clr: Limpiar la pantalla"
-                          "\n * dir <directorio>: Listar el contenido del directorio"
+                          "\n * dir: Listar el contenido del directorio"
                           "\n * environ: Listar todas las cadenas de entorno"
                           "\n * echo <comentario>: Desplegar el comentario en pantalla"
                           "\n * help: Desplegar el manual de usuario"
                           "\n * pause: Deterner la operación del shell hasta que se presiona enter"
-                          "\n * quit: Salir de SHELL");  
-    return; 
+                          "\n * quit: Salir de SHELL"); 
 }
 //Función que pausa el proceso
 void parar()
@@ -180,7 +179,9 @@ int ComandosCreados(char** parsed)
      return 1;
    case 8:
       exit(0);
-    default: 
+      break;
+    default:
+       printf("\nComando incorrecto.\n"); 
         break; 
     } 
     return 0; 
@@ -212,13 +213,12 @@ int processString(char* str, char** parsed)
 int main() 
 { 
     char inputString[MAXCOM], *parsedArgs[MAXLIST]; 
-    int execFlag;
     while (1) {
-        // Capturar datos de entrada 
-        if (DatosEntrada(inputString)) 
-            continue; 
-        // proceso 
-        execFlag = processString(inputString,parsedArgs); 
+    // Capturar datos de entrada 
+    if (DatosEntrada(inputString)) 
+       continue; 
+      // proceso 
+       processString(inputString,parsedArgs); 
         execArgs(parsedArgs);
     } 
     return 0; 
