@@ -20,8 +20,11 @@
   
 #define MAXCOM 1000 // máximo número de letras que se pueden soportar 
 #define MAXLIST 100 // máximo número de comandos que se pueden soportar
-char cwd[1024];
-char shell[1024];
+
+char cwd[1024]; // Aquí guardaré la dirección donde estaré ubicandome.
+char shell[1024]; // Aquí guardaré la dirección donde se ejecutó el shell.
+
+
 // Función que recibe datos de entrada 
 int DatosEntrada(char* str) 
 { 
