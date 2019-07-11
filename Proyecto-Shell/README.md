@@ -13,4 +13,6 @@ Luego de esto, ya es posible compilarlo y ejecutarlo de la siguiente manera:
 gcc shell.c -L/usr/include -lreadline -o shell && ./shell 
 ```
 
+Agradecimientos especiales a la página geeksforgeeks.org por la información brindada que fue la base para el entendiemiento
+del problema. 
 
