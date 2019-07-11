@@ -157,8 +157,21 @@ void clrCommand()
 //Función que enlista los archivos contenidos
 void dirCommand()
 {
-  char *args[] ={"/bin/ls",NULL};
-  execvp(args[0],args);
+  DIR *dir;
+  dir = opendir(".");
+  struct dirent *ent;
+  size_t i=1;
+  if(dir == NULL)
+ {
+  printf("\nDirectorio no encontrado.\n");
+ }
+ else
+ { 
+  while((ent = readdir (dir)) != NULL)
+   {
+    printf("%u. %s\n",i, ent->d_name);
+   } 
+ }
 }
 
 //Función que cambia a otra carpeta si es que esta existe.
@@ -204,7 +217,7 @@ int ComandosCreados(char** parsed)
         clrCommand(); 
         return 1; 
     case 3: 
-        dirCommand();
+        dirCommand(parsed);
     case 4:
         printDir();
         return 1;
