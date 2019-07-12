@@ -14,6 +14,6 @@ int main(int argc, char** argv)
 {
   a=4;
   printf("Suma: %d\n",suma(4,5));
-  printf("A: %d\n",a);
+  printf("A: %d\n",a)
   return 0;
 }
