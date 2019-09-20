@@ -15,3 +15,5 @@ desarrolladas en el curso de Sistemas Operativos - Univalle - Mayo-Octubre 2019
 * [2019_06_21](2019_06_21)
 
 * [2019_07_12](2019_07_12)
+
+* [2019_08_23](2019_08_23)
