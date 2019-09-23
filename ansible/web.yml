@@ -1,0 +1,40 @@
+---
+
+
+- name: web01
+  sudo: yes
+  tasks:
+   - name: instala apache2
+     apt: name=apache2 update_cache=yes state=latest
+   - name: Update HAProxy config
+     template: src=web01/index.html
+                dest=/var/www/html/index.html
+- name: web02
+  sudo: yes
+  tasks:
+   - name: instala apache2
+     apt: name=apache2 update_cache=yes state=latest
+   - name: Update HAProxy config
+     template: src=web02/index.html
+                dest=/var/www/html/index.html
+- name: HAProxy
+  sudo: yes
+  tasks:
+    - name: instala haproxy
+      apt: name=haproxy update_cache=yes state=latest
+
+    - name: Enable init script
+      replace: dest='/etc/default/haproxy' 
+               regexp='ENABLED=0'
+               replace='ENABLED=1'
+
+    - name: Update HAProxy config
+      template: src=etc/haproxy.cfg 
+                dest=/etc/haproxy/haproxy.cfg 
+                backup=yes
+      notify:
+       - restart haproxy
+
+  handlers:
+    - name: restart haproxy
+      service: name=haproxy state=restarted
